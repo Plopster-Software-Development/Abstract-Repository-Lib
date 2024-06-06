@@ -23,7 +23,7 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {number} $paginationLength - The number of items per page.
      * @return {LengthAwarePaginator} - An instance of LengthAwarePaginator containing the paginated results.
      */
-    public function getAll(int $paginationLength): LengthAwarePaginator | AbstractRepositoryException
+    public function getAll(int $paginationLength): LengthAwarePaginator
     {
         try {
             return $this->model->paginate($paginationLength);
@@ -39,7 +39,7 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {int|string} $id - The primary key of the model to retrieve.
      * @return {Model} The retrieved model instance.
      */
-    public function getById(int|string $id): Model | AbstractRepositoryException
+    public function getById(int|string $id): Model
     {
         try {
             return $this->model->findOrFail($id);
@@ -54,7 +54,7 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {array} $data The data to be used for creating a new record in the model.
      * @return Model Returns an instance of the model with the new record.
      */
-    public function create(array $data): Model | AbstractRepositoryException
+    public function create(array $data): Model
     {
         try {
             return $this->model->create($data);
@@ -70,7 +70,7 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {array} data - The new data to update the model with.
      * @return {bool} Returns true if the update was successful, otherwise false.
      */
-    public function update(int|string $id, array $data): bool | AbstractRepositoryException
+    public function update(int|string $id, array $data): bool
     {
         try {
             $localModel = $this->getById($id);
@@ -85,7 +85,7 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {int|string} $ fsdfsdffsdidentifies the model to delete.
      * @return {bool} Returns true if the model was successfully deleted.
      */
-    public function delete(int|string $id): bool | AbstractRepositoryException
+    public function delete(int|string $id): bool
     {
         try {
             $localModel = $this->getById($id);
@@ -102,7 +102,7 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {Array} [columns=['*']] - The specific columns to select, defaults to all.
      * @return {Collection} The collection of retrieved models.
      */
-    public function findBy(array $criteria, array $columns = ['*']): Collection | AbstractRepositoryException
+    public function findBy(array $criteria, array $columns = ['*']): Collection
     {
         try {
             return $this->model->where($criteria)->get($columns);
@@ -118,7 +118,7 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {array} $values - Optional. The values to be assigned to the model's attributes.
      * @return {Model} - The updated or newly created model instance.
      */
-    public function updateOrCreate(array $attributes, array $values = []): Model | AbstractRepositoryException
+    public function updateOrCreate(array $attributes, array $values = []): Model
     {
         try {
             return $this->model->updateOrCreate($attributes, $values);
@@ -134,7 +134,7 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param   {string[]} relations      An array of relation names to be eager loaded.
      * @return {LengthAwarePaginator}     Returns an instance of LengthAwarePaginator with the paginated result.
      */
-    public function withRelations(int $paginationLength, array $relations): LengthAwarePaginator | AbstractRepositoryException
+    public function withRelations(int $paginationLength, array $relations): LengthAwarePaginator
     {
         try {
             return $this->model->with($relations)->paginate($paginationLength);
@@ -151,7 +151,7 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {string[]} [columns=['*']] - The columns to include in the result set.
      * @return {LengthAwarePaginator} - The paginated result set.
      */
-    public function search(int $paginationLength, string $keyword, array $columns = ['*']): LengthAwarePaginator | AbstractRepositoryException
+    public function search(int $paginationLength, string $keyword, array $columns = ['*']): LengthAwarePaginator
     {
         try {
             return $this->model->where(function ($query) use ($keyword) {
