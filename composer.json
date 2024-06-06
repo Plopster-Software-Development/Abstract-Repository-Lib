@@ -1,0 +1,23 @@
+{
+    "name": "plopster/abstract-repository-lib",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Plopster\\AbstractRepository\\": "src/",
+            "Plopster\\AbstractRepository\\Contracts": "src/contracts",
+            "Plopster\\AbstractRepository\\Repositories": "src/repositories"
+        }
+    },
+    "authors": [
+        {
+            "name": "Nicolas David Estevez T.",
+            "email": "nicolas.estevez@plopster.com.co"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.2",
+        "illuminate/database": "^11.10.0"
+    }
+}
