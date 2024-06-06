@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Plopster\AbstractRepository\Contracts\IAbstractRepository;
+use Plopster\AbstractRepository\Exceptions\AbstractRepositoryException;
 
 abstract class AbstractRepository implements IAbstractRepository
 {
@@ -22,9 +23,13 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {number} $paginationLength - The number of items per page.
      * @return {LengthAwarePaginator} - An instance of LengthAwarePaginator containing the paginated results.
      */
-    public function getAll(int $paginationLength): LengthAwarePaginator
+    public function getAll(int $paginationLength): LengthAwarePaginator | AbstractRepositoryException
     {
-        return $this->model->paginate($paginationLength);
+        try {
+            return $this->model->paginate($paginationLength);
+        } catch (\Exception $e) {
+            return new AbstractRepositoryException('Error al recuperar todos los registros.', $e->getCode());
+        }
     }
 
     /**
@@ -34,9 +39,13 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {int|string} $id - The primary key of the model to retrieve.
      * @return {Model} The retrieved model instance.
      */
-    public function getById(int|string $id): Model
+    public function getById(int|string $id): Model | AbstractRepositoryException
     {
-        return $this->model->findOrFail($id);
+        try {
+            return $this->model->findOrFail($id);
+        } catch (\Exception $e) {
+            throw new AbstractRepositoryException("Error al recuperar el registro por id.", $e->getCode());
+        }
     }
 
     /**
@@ -45,9 +54,13 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {array} $data The data to be used for creating a new record in the model.
      * @return Model Returns an instance of the model with the new record.
      */
-    public function create(array $data): Model
+    public function create(array $data): Model | AbstractRepositoryException
     {
-        return $this->model->create($data);
+        try {
+            return $this->model->create($data);
+        } catch (\Exception $e) {
+            throw new AbstractRepositoryException("Error al crear el registro.", $e->getCode());
+        }
     }
 
     /**
@@ -57,10 +70,14 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {array} data - The new data to update the model with.
      * @return {bool} Returns true if the update was successful, otherwise false.
      */
-    public function update(int|string $id, array $data): bool
+    public function update(int|string $id, array $data): bool | AbstractRepositoryException
     {
-        $localModel = $this->getById($id);
-        return $localModel->update($data);
+        try {
+            $localModel = $this->getById($id);
+            return $localModel->update($data);
+        } catch (\Exception $e) {
+            throw new AbstractRepositoryException("Error al actualizar el registro por id.", $e->getCode());
+        }
     }
 
     /**
@@ -68,10 +85,14 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {int|string} $ fsdfsdffsdidentifies the model to delete.
      * @return {bool} Returns true if the model was successfully deleted.
      */
-    public function delete(int|string $id): bool
+    public function delete(int|string $id): bool | AbstractRepositoryException
     {
-        $localModel = $this->getById($id);
-        return $localModel->delete();
+        try {
+            $localModel = $this->getById($id);
+            return $localModel->delete();
+        } catch (\Exception $e) {
+            throw new AbstractRepositoryException("Error al eliminar el registro por id.", $e->getCode());
+        }
     }
 
     /**
@@ -81,9 +102,13 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {Array} [columns=['*']] - The specific columns to select, defaults to all.
      * @return {Collection} The collection of retrieved models.
      */
-    public function findBy(array $criteria, array $columns = ['*']): Collection
+    public function findBy(array $criteria, array $columns = ['*']): Collection | AbstractRepositoryException
     {
-        return $this->model->where($criteria)->get($columns);
+        try {
+            return $this->model->where($criteria)->get($columns);
+        } catch (\Exception $e) {
+            throw new AbstractRepositoryException("Error al recuperar los registros por criterio de busqueda.", $e->getCode());
+        }
     }
 
     /**
@@ -93,9 +118,13 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {array} $values - Optional. The values to be assigned to the model's attributes.
      * @return {Model} - The updated or newly created model instance.
      */
-    public function updateOrCreate(array $attributes, array $values = []): Model
+    public function updateOrCreate(array $attributes, array $values = []): Model | AbstractRepositoryException
     {
-        return $this->model->updateOrCreate($attributes, $values);
+        try {
+            return $this->model->updateOrCreate($attributes, $values);
+        } catch (\Exception $e) {
+            throw new AbstractRepositoryException("Error al actualizar o crear el registro.", $e->getCode());
+        }
     }
 
     /**
@@ -105,9 +134,13 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param   {string[]} relations      An array of relation names to be eager loaded.
      * @return {LengthAwarePaginator}     Returns an instance of LengthAwarePaginator with the paginated result.
      */
-    public function withRelations(int $paginationLength, array $relations): LengthAwarePaginator
+    public function withRelations(int $paginationLength, array $relations): LengthAwarePaginator | AbstractRepositoryException
     {
-        return $this->model->with($relations)->paginate($paginationLength);
+        try {
+            return $this->model->with($relations)->paginate($paginationLength);
+        } catch (\Exception $e) {
+            throw new AbstractRepositoryException("Error al recuperar los registros con relaciones.", $e->getCode());
+        }
     }
 
     /**
@@ -118,11 +151,15 @@ abstract class AbstractRepository implements IAbstractRepository
      * @param {string[]} [columns=['*']] - The columns to include in the result set.
      * @return {LengthAwarePaginator} - The paginated result set.
      */
-    public function search(int $paginationLength, string $keyword, array $columns = ['*']): LengthAwarePaginator
+    public function search(int $paginationLength, string $keyword, array $columns = ['*']): LengthAwarePaginator | AbstractRepositoryException
     {
-        return $this->model->where(function ($query) use ($keyword) {
-            $query->where('name', 'like', "%{$keyword}%")
-                ->orWhere('description', 'like', "%{$keyword}%");
-        })->paginate($paginationLength, $columns);
+        try {
+            return $this->model->where(function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%");
+            })->paginate($paginationLength, $columns);
+        } catch (\Exception $e) {
+            throw new AbstractRepositoryException("Error al realizar la busqueda del registro.", $e->getCode());
+        }
     }
 }
