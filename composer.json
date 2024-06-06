@@ -4,9 +4,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Plopster\\AbstractRepository\\": "src/",
-            "Plopster\\AbstractRepository\\Contracts": "src/contracts",
-            "Plopster\\AbstractRepository\\Repositories": "src/repositories"
+            "Plopster\\AbstractRepository\\": "src/"
         }
     },
     "authors": [
