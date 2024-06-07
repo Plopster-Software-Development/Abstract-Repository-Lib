@@ -28,7 +28,7 @@ abstract class AbstractRepository implements IAbstractRepository
         try {
             return $this->model->paginate($paginationLength);
         } catch (\Exception $e) {
-            return new AbstractRepositoryException('Error al recuperar todos los registros.', $e->getCode());
+            throw new AbstractRepositoryException('Error al recuperar todos los registros.', $e->getCode());
         }
     }
 
